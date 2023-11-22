@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:food_delivery_app/blocs/basket_bloc/basket_bloc.dart';
 import 'package:food_delivery_app/models/models.dart';
 import 'package:food_delivery_app/widgets/home/restaurant_tags.dart';
 
@@ -45,7 +47,7 @@ class RestaurantInformation extends StatelessWidget {
             style: Theme.of(context).textTheme.bodySmall,
           ),
           ListView.builder(
-            shrinkWrap: true,
+              shrinkWrap: true,
               itemBuilder: (context, index) {
                 return _buildMenuItem(restaurant, context, index);
               },
@@ -77,7 +79,7 @@ class RestaurantInformation extends StatelessWidget {
                         color: Colors.white,
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: ListTile(
-                          dense:true,
+                          dense: true,
                           contentPadding: EdgeInsets.zero,
                           title: Text(
                             menuItem.name,
@@ -91,13 +93,29 @@ class RestaurantInformation extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.end,
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Text('\$${menuItem.price}',style: Theme.of(context).textTheme.bodySmall,),
-                              IconButton(onPressed: (){}, icon: Icon(Icons.add_circle,color: Theme.of(context).primaryColor,))
+                              Text(
+                                '\$${menuItem.price}',
+                                style: Theme.of(context).textTheme.bodySmall,
+                              ),
+                              BlocBuilder<BasketBloc, BasketState>(
+                                builder: (context, state) {
+                                  return IconButton(
+                                      onPressed: () {
+                                        context.read<BasketBloc>().add(AddItem(menuItem: menuItem));
+                                      },
+                                      icon: Icon(
+                                        Icons.add_circle,
+                                        color: Theme.of(context).primaryColor,
+                                      ));
+                                },
+                              )
                             ],
                           ),
                         ),
                       ),
-                      Divider(height: 4,),
+                      Divider(
+                        height: 4,
+                      ),
                     ],
                   ))
               .toList())

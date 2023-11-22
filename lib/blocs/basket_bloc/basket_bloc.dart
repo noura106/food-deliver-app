@@ -15,25 +15,37 @@ class BasketBloc extends Bloc<BasketEvent, BasketState> {
     on<StartBasket>((event, emit) async {
       emit(BasketLoading());
       await Future.delayed(const Duration(seconds: 1));
-      emit(const BasketLoaded());
+      emit( BasketLoaded());
     });
     on<AddItem>((event, emit) async {
       try {
-        if (state is BasketLoaded) {
-          emit(BasketLoaded(
-              basket: (state as BasketLoaded).basket.copyWith(
-                  items: List.from((state as BasketLoaded).basket.menuItems
-                    ..add(event.menuItem)))));
-        }
-      } catch (_) {}
+        emit(BasketLoaded(
+            basket: (state as BasketLoaded).basket.copyWith(
+                items:(state as BasketLoaded).basket.menuItems.toList()..add(event.menuItem)
+                  )));
+      } catch (e) {
+        print(e);
+      }
     });
     on<RemoveItem>((event, emit) async {
       try {
         if (state is BasketLoaded) {
           emit(BasketLoaded(
               basket: (state as BasketLoaded).basket.copyWith(
-                  items: List.from((state as BasketLoaded).basket.menuItems
+                  items: List.from((state as BasketLoaded).basket.menuItems.toList()
                     ..remove(event.menuItem)))));
+          print((state as BasketLoaded).basket.menuItems);
+        }
+      } catch (_) {}
+    });
+    on<RemoveAllItem>((event, emit) async {
+      try {
+        if (state is BasketLoaded) {
+          emit(BasketLoaded(
+              basket: (state as BasketLoaded).basket.copyWith(
+                  items: List.from((state as BasketLoaded).basket.menuItems.toList()
+                    ..removeWhere((element) => element==event.menuItem)))));
+          print((state as BasketLoaded).basket.menuItems);
         }
       } catch (_) {}
     });

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:food_delivery_app/blocs/basket_bloc/basket_bloc.dart';
+import 'package:food_delivery_app/screens/edit_basket_screen.dart';
 
 class BasketScreen extends StatelessWidget {
   static const String routeName = '/basket';
@@ -24,7 +25,12 @@ class BasketScreen extends StatelessWidget {
               .headlineMedium
               ?.copyWith(color: Colors.white),
         ),
-        actions: [IconButton(onPressed: () {}, icon: const Icon(Icons.edit))],
+        actions: [
+          IconButton(
+              onPressed: () =>
+                  Navigator.pushNamed(context, EditBasketScreen.routeName),
+              icon: const Icon(Icons.edit))
+        ],
       ),
       bottomNavigationBar: BottomAppBar(
         child: Row(
@@ -117,7 +123,10 @@ class BasketScreen extends StatelessWidget {
                         ? ListView.builder(
                             physics: const NeverScrollableScrollPhysics(),
                             shrinkWrap: true,
-                            itemCount: 4,
+                            itemCount: state.basket
+                                .itemQuantity(state.basket.menuItems)
+                                .keys
+                                .length,
                             itemBuilder: (context, index) {
                               return Container(
                                 width: double.infinity,
@@ -134,7 +143,7 @@ class BasketScreen extends StatelessWidget {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
-                                      '1x',
+                                      '${state.basket.itemQuantity(state.basket.menuItems).entries.elementAt(index).value}x',
                                       style: Theme.of(context)
                                           .textTheme
                                           .headlineSmall
@@ -148,7 +157,7 @@ class BasketScreen extends StatelessWidget {
                                     ),
                                     Expanded(
                                       child: Text(
-                                        'Apple Pie',
+                                        '${state.basket.itemQuantity(state.basket.menuItems).keys.elementAt(index).name}',
                                         textAlign: TextAlign.left,
                                         style: Theme.of(context)
                                             .textTheme
@@ -156,7 +165,7 @@ class BasketScreen extends StatelessWidget {
                                       ),
                                     ),
                                     Text(
-                                      '\$2.00',
+                                      '\$${state.basket.itemQuantity(state.basket.menuItems).keys.elementAt(index).price}',
                                       style:
                                           Theme.of(context).textTheme.bodySmall,
                                     ),
@@ -275,57 +284,72 @@ class BasketScreen extends StatelessWidget {
                 decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(5.0)),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Subtotal',
-                          style: Theme.of(context).textTheme.headlineSmall,
-                        ),
-                        Text(
-                          '\$20.00',
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 5),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Delivery Fee',
-                          style: Theme.of(context).textTheme.headlineSmall,
-                        ),
-                        Text(
-                          '\$20.00',
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 5),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Total',
-                          style: Theme.of(context)
-                              .textTheme
-                              .headlineSmall!
-                              .copyWith(color: Theme.of(context).primaryColor),
-                        ),
-                        Text(
-                          '\$40.00',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall!
-                              .copyWith(color: Theme.of(context).primaryColor),
-                        ),
-                      ],
-                    ),
-                  ],
+                child: BlocBuilder<BasketBloc, BasketState>(
+                  builder: (context, state) {
+                    if (state is BasketLoading) {
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    } else if (state is BasketLoaded) {
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Subtotal',
+                                style:
+                                    Theme.of(context).textTheme.headlineSmall,
+                              ),
+                              Text(
+                                '\$${state.basket.subtotalToString}',
+                                style: Theme.of(context).textTheme.bodySmall,
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 5),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Delivery Fee',
+                                style:
+                                    Theme.of(context).textTheme.headlineSmall,
+                              ),
+                              Text(
+                                '\$20.00',
+                                style: Theme.of(context).textTheme.bodySmall,
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 5),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Total',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headlineSmall!
+                                    .copyWith(
+                                        color: Theme.of(context).primaryColor),
+                              ),
+                              Text(
+                                '\$${state.basket.totalToString}',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall!
+                                    .copyWith(
+                                        color: Theme.of(context).primaryColor),
+                              ),
+                            ],
+                          ),
+                        ],
+                      );
+                    } else
+                      return const Text('some thing went wrong');
+                  },
                 ),
               ),
             ],

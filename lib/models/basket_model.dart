@@ -2,10 +2,10 @@ import 'package:equatable/equatable.dart';
 import 'package:food_delivery_app/models/models.dart';
 
 class Basket extends Equatable {
-  final List<MenuItem> menuItems;
+   final List<MenuItem> menuItems;
   final bool cutlery;
 
-  const Basket({this.menuItems = const <MenuItem>[], this.cutlery = false});
+   const Basket({this.menuItems =  const <MenuItem>[], this.cutlery = false});
 
   @override
   // TODO: implement props

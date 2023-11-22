@@ -11,7 +11,7 @@ abstract class BasketState  extends Equatable{
 class BasketLoading extends BasketState {}
 class BasketLoaded extends BasketState {
   final Basket basket;
-  const BasketLoaded({this.basket=const Basket()});
+ const  BasketLoaded({this.basket=  const Basket()});
   @override
   // TODO: implement props
   List<Object?> get props => [basket];
