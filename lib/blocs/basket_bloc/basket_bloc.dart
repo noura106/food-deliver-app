@@ -59,5 +59,25 @@ class BasketBloc extends Bloc<BasketEvent, BasketState> {
         }
       } catch (_) {}
     });
+    on<AddVoucher>((event, emit) async {
+      try {
+        if (state is BasketLoaded) {
+          emit(BasketLoaded(
+              basket: (state as BasketLoaded)
+                  .basket
+                  .copyWith(voucher: event.voucher)));
+        }
+      } catch (_) {}
+    });
+    on<SelectDeliveryTime>((event, emit) async {
+      try {
+        if (state is BasketLoaded) {
+          emit(BasketLoaded(
+              basket: (state as BasketLoaded)
+                  .basket
+                  .copyWith(deliveryTime: event.deliveryTime)));
+        }
+      } catch (_) {}
+    });
   }
 }

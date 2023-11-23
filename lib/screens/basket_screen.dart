@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:food_delivery_app/blocs/basket_bloc/basket_bloc.dart';
 import 'package:food_delivery_app/screens/edit_basket_screen.dart';
+import 'package:food_delivery_app/screens/screens.dart';
 
 class BasketScreen extends StatelessWidget {
   static const String routeName = '/basket';
@@ -211,27 +212,46 @@ class BasketScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     SvgPicture.asset('assets/delivery_time.svg'),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const SizedBox(height: 20),
-                        Text(
-                          'Delivery in 20 minutes',
-                          style: Theme.of(context).textTheme.headlineSmall,
-                        ),
-                        TextButton(
-                          onPressed: () {},
-                          child: Text(
-                            'Change',
-                            style: Theme.of(context)
-                                .textTheme
-                                .headlineMedium!
-                                .copyWith(
-                                    color: Theme.of(context).primaryColor),
-                          ),
-                        ),
-                      ],
-                    )
+                    BlocBuilder<BasketBloc, BasketState>(
+                      builder: (context, state) {
+                        if (state is BasketLoaded) {
+                          return (state.basket.deliveryTime == null)
+                              ? Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const SizedBox(height: 20),
+                              Text(
+                                'Delivery in 20 minutes',
+                                style:
+                                Theme.of(context).textTheme.headline6,
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pushNamed(
+                                      context, DeliveryTimeScreen.routeName);
+                                },
+                                child: Text(
+                                  'Change',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headlineMedium!
+                                      .copyWith(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .primary),
+                                ),
+                              ),
+                            ],
+                          )
+                              : Text(
+                            'Delivery at ${state.basket.deliveryTime!.value}',
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          );
+                        } else {
+                          return Text('Something went wrong');
+                        }
+                      },
+                    ),
                   ],
                 ),
               ),
@@ -257,7 +277,8 @@ class BasketScreen extends StatelessWidget {
                           style: Theme.of(context).textTheme.headlineSmall,
                         ),
                         TextButton(
-                          onPressed: () {},
+                          onPressed: () => Navigator.pushNamed(
+                              context, VoucherScreen.routeName),
                           child: Text(
                             'Apply',
                             style: Theme.of(context)
