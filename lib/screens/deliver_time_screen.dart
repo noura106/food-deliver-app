@@ -122,8 +122,6 @@ class DeliveryTimeScreen extends StatelessWidget {
                                 context.read<BasketBloc>().add(
                                     SelectDeliveryTime(
                                         DeliveryTime.deliveryTimes[index]));
-                                print((state as BasketLoaded).basket.deliveryTime);
-
                               },
                               child: Text(
                                 DeliveryTime.deliveryTimes[index].value,
